@@ -6,8 +6,6 @@ const cookie = require('cookie-parser')
 const mongoose = require('mongoose')
 const dotenv = require('dotenv').config()
 
-const authRoutes = require('./routes/authRoutes')
-const blogRoutes = require('./routes/blogRoutes');
 
 // express app
 const app = express();
@@ -31,22 +29,6 @@ app.use(express.static('public'))
 
 // middleware
 app.use(morgan('dev'))
-app.use(cookie())
-app.use(session({
-    key: 'user_sid',
-    secret: process.env.SESSION_SECRET,
-    cookie: {
-        // secure: true,
-        maxAge: 1000 * 60 * 60 * 24 * 7 // 1 week
-    },
-    store: MongoStore.create({
-        mongoUrl: dbURI,
-        ttl: 14 * 24 * 60 * 60, 
-        collectionName: 'sessions'
-    }),
-    resave: false,
-    saveUninitialized: true
-}))
 app.use(express.urlencoded({ extended: true }))
 
 // app.use((req, res, next) => {
@@ -64,9 +46,6 @@ app.get('/', (req, res) => {
 app.get('/about', (req, res) => {
     res.render('about', { title: "About" });
 })
-
-// auth routes
-app.use(authRoutes)
 
 // blog routes
 app.use('/blogs', blogRoutes)
